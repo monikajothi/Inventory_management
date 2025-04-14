@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const uri = "mongodb+srv://sasirekhavl22cse:kJJOGjKBQafJ3g4j@inventorymanagement.hx2rtrv.mongodb.net/?retryWrites=true&w=majority&appName=InventoryManagement";
+const uri = "mongodb+srv://monikajothi07:HJXUxZZnEwXGtJbT@cluster0.2sqz0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 
 function main() {
@@ -13,4 +13,4 @@ function main() {
 
 module.exports = { main };
 
-//kJJOGjKBQafJ3g4j
+//HJXUxZZnEwXGtJbT

@@ -24,7 +24,7 @@ function Inventory() {
 
   // Fetching Data of All Products
   const fetchProductsData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/product/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
@@ -34,7 +34,7 @@ function Inventory() {
 
   // Fetching Data of Search Products
   const fetchSearchData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/product/search?searchTerm=${searchTerm}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/search?searchTerm=${searchTerm}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
@@ -44,7 +44,7 @@ function Inventory() {
 
   // Fetching all stores data
   const fetchSalesData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/store/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);
@@ -67,8 +67,8 @@ function Inventory() {
   // Delete item
   const deleteItem = (id) => {
     console.log("Product ID: ", id);
-    console.log(`https://inventory-management-5d02.onrender.com/api/product/delete/${id}`);
-    fetch(`https://inventory-management-5d02.onrender.com/api/product/delete/${id}`)
+    console.log(`https://inventory-management-s29k.onrender.com/api/product/delete/${id}`);
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/delete/${id}`)
       .then((response) => response.json())
       .then((data) => {
         setUpdatePage(!updatePage);

@@ -21,7 +21,7 @@ function Register() {
 
   // Register User
   const registerUser = () => {
-    fetch("https://inventory-management-5d02.onrender.com/api/register", {
+    fetch("https://inventory-management-s29k.onrender.com/api/register", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

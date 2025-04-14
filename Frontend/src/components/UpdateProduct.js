@@ -22,7 +22,7 @@ export default function UpdateProduct({
   };
 
   const updateProduct = () => {
-    fetch("https://inventory-management-5d02.onrender.com/api/product/update", {
+    fetch("https://inventory-management-s29k.onrender.com/api/product/update", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

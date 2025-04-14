@@ -19,7 +19,7 @@ function Login() {
 
   const authCheck = () => {
     setTimeout(() => {
-      fetch("https://inventory-management-5d02.onrender.com/api/login")
+      fetch("https://inventory-management-s29k.onrender.com/api/login")
         .then((response) => response.json())
         .then((data) => {
           alert("Successfully Login");
@@ -40,7 +40,7 @@ function Login() {
     if (form.email === "" || form.password === "") {
       alert("To login user, enter details to proceed...");
     } else {
-      fetch("https://inventory-management-5d02.onrender.com/api/login", {
+      fetch("https://inventory-management-s29k.onrender.com/api/login", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

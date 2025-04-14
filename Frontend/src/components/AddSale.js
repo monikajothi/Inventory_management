@@ -25,7 +25,7 @@ export default function AddSale({
   };
 
   const addSale = () => {
-    fetch("https://inventory-management-5d02.onrender.com/api/sales/add", {
+    fetch("https://inventory-management-s29k.onrender.com/api/sales/add", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

@@ -12,7 +12,7 @@ function Store() {
   }, []);
 
   const fetchData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/store/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);

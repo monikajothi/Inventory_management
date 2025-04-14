@@ -23,7 +23,7 @@ export default function AddProduct({
   };
 
   const addProduct = () => {
-    fetch("https://inventory-management-5d02.onrender.com/api/product/add", {
+    fetch("https://inventory-management-s29k.onrender.com/api/product/add", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

@@ -18,7 +18,7 @@ function Sales() {
 
   // Fetching Data of All Sales
   const fetchSalesData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/sales/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllSalesData(data);
@@ -31,7 +31,7 @@ function Sales() {
 
   // Fetching Data of All Stores
   const fetchStoresData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/store/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);

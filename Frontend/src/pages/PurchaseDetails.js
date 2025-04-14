@@ -17,7 +17,7 @@ function PurchaseDetails() {
 
   // Fetching Data of All Purchase items
   const fetchPurchaseData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/purchase/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/purchase/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllPurchaseData(data);
@@ -27,7 +27,7 @@ function PurchaseDetails() {
 
   // Fetching Data of All Products
   const fetchProductsData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/product/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);

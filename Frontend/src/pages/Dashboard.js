@@ -15,25 +15,38 @@ function Dashboard() {
       },
       xaxis: {
         categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
         ],
       },
+      yaxis: {
+        logarithmic: true, // Enable logarithmic scale
+        title: {
+          text: "Sales Amount",
+        },
+      },
+      dataLabels: {
+        enabled: true, // Enable data labels
+        style: {
+          fontSize: "12px",
+          colors: ["#000"], // Set label color
+        },
+        offsetY: -10, // Adjust position of labels
+        formatter: function (val) {
+          return val.toLocaleString(); // Format the value (optional)
+        },
+        textAnchor: "middle", // Align text in the center
+        dropShadow: {
+          enabled: false, // Disable shadow for better clarity
+        },
+        rotate: -90, // Rotate the labels to display vertically
+      },
     },
+    
     series: [
       {
-        name: "series",
-        data: [10, 20, 40, 50, 60, 20, 10, 35, 45, 70, 25, 70],
+        name: "Monthly Sales Amount",
+        data: [0, 15600, 0, 10215600, 55000, 0, 0, 0, 0, 0, 0, 0],
       },
     ],
   });
@@ -64,7 +77,7 @@ function Dashboard() {
   // Fetching total sales amount
   const fetchTotalSaleAmount = () => {
     fetch(
-      `https://inventory-management-5d02.onrender.com/api/sales/get/${authContext.user}/totalsaleamount`
+      `https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user}/totalsaleamount`
     )
       .then((response) => response.json())
       .then((datas) => setSaleAmount(datas.totalSaleAmount));
@@ -73,7 +86,7 @@ function Dashboard() {
   // Fetching total purchase amount
   const fetchTotalPurchaseAmount = () => {
     fetch(
-      `https://inventory-management-5d02.onrender.com/api/purchase/get/${authContext.user}/totalpurchaseamount`
+      `https://inventory-management-s29k.onrender.com/api/purchase/get/${authContext.user}/totalpurchaseamount`
     )
       .then((response) => response.json())
       .then((datas) => setPurchaseAmount(datas.totalPurchaseAmount));
@@ -81,14 +94,14 @@ function Dashboard() {
 
   // Fetching all stores data
   const fetchStoresData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/store/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((datas) => setStores(datas));
   };
 
   // Fetching Data of All Products
   const fetchProductsData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/product/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`)
       .then((response) => response.json())
       .then((datas) => setProducts(datas))
       .catch((err) => console.log(err));
@@ -96,7 +109,7 @@ function Dashboard() {
 
   // Fetching Monthly Sales
   const fetchMonthlySalesData = () => {
-    fetch(`https://inventory-management-5d02.onrender.com/api/sales/getmonthly`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/sales/getmonthly`)
       .then((response) => response.json())
       .then((datas) => updateChartData(datas.salesAmount))
       .catch((err) => console.log(err));
@@ -227,7 +240,7 @@ function Dashboard() {
               />
             </svg>
 
-            <span className="text-xs font-medium"> 67.81% </span>
+            <span className="text-xs font-small"> 67.81% </span>
           </div>
 
           <div>
@@ -251,7 +264,7 @@ function Dashboard() {
               options={chart.options}
               series={chart.series}
               type="bar"
-              width="500"
+              width="700"
             />
           </div>
         </div>
