@@ -84,7 +84,16 @@ function Dashboard() {
   const fetchMonthlySalesData = useCallback(() => {
     fetch(`https://inventory-management-s29k.onrender.com/api/sales/getmonthly`)
       .then((response) => response.json())
-      .then((datas) => updateChartData(datas.salesAmount))
+      .then((datas) => {
+        const salesData = datas.salesAmount || [];
+  
+        // Ensure 12 months, and override Nov & Dec
+        const paddedData = Array.from({ length: 12 }, (_, i) => salesData[i] || 0);
+        paddedData[10] = 0; // November
+        paddedData[11] = 0; // December
+  
+        updateChartData(paddedData);
+      })
       .catch((err) => console.log(err));
   }, []);
 
@@ -122,7 +131,7 @@ function Dashboard() {
       <div className="grid grid-cols-1 col-span-12 lg:col-span-10 gap-6 md:grid-cols-3 lg:grid-cols-4 p-4">
         <article className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-6">
           <div className="inline-flex gap-2 self-end rounded bg-green-100 p-1 text-green-600">
-            <span className="text-xs font-medium"> 67.81% </span>
+          
           </div>
           <div>
             <strong className="block text-sm font-medium text-gray-500">
@@ -132,28 +141,12 @@ function Dashboard() {
               <span className="text-2xl font-medium text-gray-900">
                 Rs.{saleAmount}
               </span>
-              <span className="text-xs text-gray-500"> from Rs.1000 </span>
             </p>
           </div>
         </article>
         <article className="flex flex-col  gap-4 rounded-lg border border-gray-100 bg-white p-6 ">
           <div className="inline-flex gap-2 self-end rounded bg-red-100 p-1 text-red-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-              />
-            </svg>
 
-            <span className="text-xs font-medium"> 67.81% </span>
           </div>
 
           <div>
@@ -167,28 +160,13 @@ function Dashboard() {
                 Rs.{purchaseAmount}{" "}
               </span>
 
-              <span className="text-xs text-gray-500"> from Rs.5000 </span>
             </p>
           </div>
         </article>
         <article className="flex flex-col   gap-4 rounded-lg border border-gray-100 bg-white p-6 ">
           <div className="inline-flex gap-2 self-end rounded bg-red-100 p-1 text-red-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-              />
-            </svg>
+           
 
-            <span className="text-xs font-medium"> 67.81% </span>
           </div>
 
           <div>
@@ -208,22 +186,8 @@ function Dashboard() {
         </article>
         <article className="flex flex-col   gap-4 rounded-lg border border-gray-100 bg-white p-6 ">
           <div className="inline-flex gap-2 self-end rounded bg-red-100 p-1 text-red-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-              />
-            </svg>
+           
 
-            <span className="text-xs font-small"> 67.81% </span>
           </div>
 
           <div>

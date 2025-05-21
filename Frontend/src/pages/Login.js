@@ -1,71 +1,68 @@
-// import { LockClosedIcon } from "@heroicons/react/20/solid";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
+import React, { useContext } from 'react';
 
 function Login() {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
-
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const authCheck = () => {
-    setTimeout(() => {
-      fetch("https://inventory-management-s29k.onrender.com/api/login")
-        .then((response) => response.json())
-        .then((data) => {
-          alert("Successfully Login");
-          localStorage.setItem("user", JSON.stringify(data));
-          authContext.signin(data._id, () => {
-            navigate("/");
-          });
-        })
-        .catch((err) => {
-          alert("Wrong credentials, Try again")
-          console.log(err);
-        });
-    }, 3000);
-  };
-
-  const loginUser = (e) => {
-    // Cannot send empty data
-    if (form.email === "" || form.password === "") {
-      alert("To login user, enter details to proceed...");
-    } else {
-      fetch("https://inventory-management-s29k.onrender.com/api/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(form),
-      })
-        .then((result) => {
-          console.log("User login", result);
-        })
-        .catch((error) => {
-          console.log("Something went wrong ", error);
-        });
-    }
-    authCheck();
-  };
-
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.email || !form.password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    try {
+      await authContext.signin(form.email, form.password);
+      alert("Login successful!");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to log in. Check your credentials.");
+    }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      await authContext.googleSignIn();
+      alert("Logged in with Google!");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Google login failed.");
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!form.email) {
+      alert("Enter your email to reset password");
+      return;
+    }
   
+    try {
+      await authContext.forgotPassword(form.email); // ✅ Wait for Firebase call
+      navigate("/reset-password"); // ✅ Then redirect
+      alert("Password reset email sent!");
+    } catch (error) {
+      alert("Failed to send reset email.");
+      console.error(error);
+    }
+  };
+
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 h-screen  items-center place-items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 h-screen items-center place-items-center">
         <div className="flex justify-center">
           <img src={require("../assets/signup.jpg")} alt="" />
         </div>
@@ -77,12 +74,10 @@ function Login() {
               alt="Your Company"
             />
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-              Signin to your account
+              Sign in to your account
             </h2>
-            
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {/* <input type="hidden" name="remember" defaultValue="true" /> */}
             <div className="-space-y-px rounded-md shadow-sm">
               <div>
                 <label htmlFor="email-address" className="sr-only">
@@ -117,7 +112,6 @@ function Login() {
                 />
               </div>
             </div>
-
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -133,37 +127,29 @@ function Login() {
                   Remember me
                 </label>
               </div>
-
               <div className="text-sm">
-                <span
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
                   className="font-medium text-indigo-600 hover:text-indigo-500"
                 >
                   Forgot your password?
-                </span>
+                </button>
               </div>
             </div>
-
             <div>
               <button
                 type="submit"
                 className="group relative flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={loginUser}
               >
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  {/* <LockClosedIcon
-                    className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                    aria-hidden="true"
-                  /> */}
-                </span>
                 Sign in
               </button>
+              
               <p className="mt-2 text-center text-sm text-gray-600">
                 Or{" "}
-                <span
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Don't Have an Account, Please{" "}
-                  <Link to="/register"> Register now </Link>
+                <span className="font-medium text-indigo-600 hover:text-indigo-500">
+                  Don't Have an Account?{" "}
+                  <Link to="/register">Register now</Link>
                 </span>
               </p>
             </div>

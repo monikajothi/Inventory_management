@@ -13,7 +13,12 @@ const app = express();
 const PORT = 4000;
 main();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 // Store API
 app.use("/api/store", storeRoute);
@@ -27,11 +32,9 @@ app.use("/api/purchase", purchaseRoute);
 // Sales API
 app.use("/api/sales", salesRoute);
 
-// ------------- Signin --------------
 let userAuthCheck;
 app.post("/api/login", async (req, res) => {
   console.log(req.body);
-  // res.send("hi");
   try {
     const user = await User.findOne({
       email: req.body.email,
@@ -51,13 +54,9 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Getting User Details of login user
 app.get("/api/login", (req, res) => {
   res.send(userAuthCheck);
 });
-// ------------------------------------
-
-// Registration API
 app.post("/api/register", (req, res) => {
   let registerUser = new User({
     firstName: req.body.firstName,
@@ -85,7 +84,6 @@ app.get("/testget", async (req,res)=>{
 
 })
 
-// Here we are listening to the server
 app.listen(PORT, () => {
   console.log("I am live again");
 });

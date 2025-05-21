@@ -14,7 +14,7 @@ const SaleSchema = new mongoose.Schema(
     StoreID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "store",
-      required: true,
+      required: false,
     },
     StockSold: {
       type: Number,

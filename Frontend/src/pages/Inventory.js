@@ -12,167 +12,176 @@ function Inventory() {
   const [updatePage, setUpdatePage] = useState(true);
   const [stores, setAllStores] = useState([]);
 
+  const [sales, setSales] = useState([]);
+  const [purchases, setPurchases] = useState([]);
+
+  const [totalInventoryValue, setTotalInventoryValue] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [topSellingProducts, setTopSellingProducts] = useState([]);
+  const [lowStockProducts, setLowStockProducts] = useState(0);
+
   const authContext = useContext(AuthContext);
-  console.log('====================================');
-  console.log(authContext);
-  console.log('====================================');
 
   useEffect(() => {
-    fetchProductsData();
-    fetchSalesData();
+    fetchAllData();
   }, [updatePage]);
 
-  // Fetching Data of All Products
-  const fetchProductsData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAllProducts(data);
-      })
-      .catch((err) => console.log(err));
+  const fetchAllData = async () => {
+    try {
+      const [productRes, storeRes, salesRes, purchaseRes] = await Promise.all([
+        fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`),
+        fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`),
+        fetch(`https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user}`),
+        fetch(`https://inventory-management-s29k.onrender.com/api/purchase/get/${authContext.user}`),
+      ]);
+
+      const productData = await productRes.json();
+      const storeData = await storeRes.json();
+      const salesData = await salesRes.json();
+      const purchaseData = await purchaseRes.json();
+
+      setAllProducts(productData);
+      setAllStores(storeData);
+      setSales(salesData);
+      setPurchases(purchaseData);
+
+      calculateInventoryMetrics(productData, salesData, purchaseData);
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    }
   };
 
-  // Fetching Data of Search Products
-  const fetchSearchData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/product/search?searchTerm=${searchTerm}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAllProducts(data);
-      })
-      .catch((err) => console.log(err));
+  const calculateInventoryMetrics = (products, sales, purchases) => {
+    let inventoryValue = 0;
+    let revenue = 0;
+    let stockAlert = 0;
+    const productSalesMap = {};
+
+    purchases.forEach((item) => {
+      inventoryValue += (item.purchasePrice || 0) * (item.quantity || 0);
+    });
+
+    sales.forEach((item) => {
+      revenue += (item.sellingPrice || 0) * (item.quantity || 0);
+      if (item.productId) {
+        productSalesMap[item.productId] = (productSalesMap[item.productId] || 0) + item.quantity;
+      }
+    });
+
+    products.forEach((item) => {
+      if ((item.stock || 0) <= 5) stockAlert++;
+    });
+
+    const topProducts = Object.entries(productSalesMap)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([id]) => id);
+
+    setTotalInventoryValue(inventoryValue);
+    setTotalRevenue(revenue);
+    setTopSellingProducts(topProducts);
+    setLowStockProducts(stockAlert);
   };
 
-  // Fetching all stores data
-  const fetchSalesData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAllStores(data);
-      });
-  };
+  const addProductModalSetting = () => setShowProductModal(!showProductModal);
 
-  // Modal for Product ADD
-  const addProductModalSetting = () => {
-    setShowProductModal(!showProductModal);
-  };
-
-  // Modal for Product UPDATE
   const updateProductModalSetting = (selectedProductData) => {
-    console.log("Clicked: edit");
     setUpdateProduct(selectedProductData);
     setShowUpdateModal(!showUpdateModal);
   };
 
-
-  // Delete item
   const deleteItem = (id) => {
-    console.log("Product ID: ", id);
-    console.log(`https://inventory-management-s29k.onrender.com/api/product/delete/${id}`);
     fetch(`https://inventory-management-s29k.onrender.com/api/product/delete/${id}`)
       .then((response) => response.json())
-      .then((data) => {
-        setUpdatePage(!updatePage);
-      });
+      .then(() => setUpdatePage(!updatePage));
   };
 
-  // Handle Page Update
-  const handlePageUpdate = () => {
-    setUpdatePage(!updatePage);
-  };
+  const handlePageUpdate = () => setUpdatePage(!updatePage);
 
-  // Handle Search Term
   const handleSearchTerm = (e) => {
     setSearchTerm(e.target.value);
-    fetchSearchData();
+    fetch(
+      `https://inventory-management-s29k.onrender.com/api/product/search?searchTerm=${e.target.value}`
+    )
+      .then((response) => response.json())
+      .then((data) => setAllProducts(data))
+      .catch((err) => console.log(err));
   };
 
   return (
-    <div className="col-span-12 lg:col-span-10  flex justify-center">
-      <div className=" flex flex-col gap-5 w-11/12">
+    <div className="col-span-12 lg:col-span-10 flex justify-center">
+      <div className="flex flex-col gap-5 w-11/12">
+        {/* Overview Cards */}
         <div className="bg-white rounded p-3">
           <span className="font-semibold px-4">Overall Inventory</span>
-          <div className=" flex flex-col md:flex-row justify-center items-center  ">
-            <div className="flex flex-col p-10  w-full  md:w-3/12  ">
+          <div className="flex flex-col md:flex-row justify-center items-center">
+            <div className="flex flex-col p-10 w-full md:w-3/12">
               <span className="font-semibold text-blue-600 text-base">
                 Total Products
               </span>
               <span className="font-semibold text-gray-600 text-base">
                 {products.length}
               </span>
-              <span className="font-thin text-gray-400 text-xs">
-                Last 7 days
-              </span>
+              <span className="font-thin text-gray-400 text-xs">Last 7 days</span>
             </div>
-            <div className="flex flex-col gap-3 p-10   w-full  md:w-3/12 sm:border-y-2  md:border-x-2 md:border-y-0">
-              <span className="font-semibold text-yellow-600 text-base">
-                Stores
-              </span>
+
+            {/* <div className="flex flex-col gap-3 p-10 w-full md:w-3/12 sm:border-y-2 md:border-x-2 md:border-y-0">
+              <span className="font-semibold text-yellow-600 text-base">Stores</span>
               <div className="flex gap-8">
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
                     {stores.length}
                   </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Last 7 days
-                  </span>
+                  <span className="font-thin text-gray-400 text-xs">Last 7 days</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    Rs.2000
+                    ₹{totalRevenue}
                   </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Revenue
-                  </span>
+                  <span className="font-thin text-gray-400 text-xs">Revenue</span>
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-3 p-10  w-full  md:w-3/12  sm:border-y-2 md:border-x-2 md:border-y-0">
-              <span className="font-semibold text-purple-600 text-base">
-                Top Selling
-              </span>
+            </div> */}
+
+            {/* <div className="flex flex-col gap-3 p-10 w-full md:w-3/12 sm:border-y-2 md:border-x-2 md:border-y-0">
+              <span className="font-semibold text-purple-600 text-base">Top Selling</span>
               <div className="flex gap-8">
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    5
+                    {topSellingProducts.length}
                   </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Last 7 days
-                  </span>
+                  <span className="font-thin text-gray-400 text-xs">Last 7 days</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    Rs.1500
+                    ₹{totalInventoryValue}
                   </span>
-                  <span className="font-thin text-gray-400 text-xs">Cost</span>
+                  <span className="font-thin text-gray-400 text-xs">Stock Value</span>
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-3 p-10  w-full  md:w-3/12  border-y-2  md:border-x-2 md:border-y-0">
-              <span className="font-semibold text-red-600 text-base">
-                Low Stocks
-              </span>
+            </div> */}
+
+            <div className="flex flex-col gap-3 p-10 w-full md:w-3/12 border-y-2 md:border-x-2 md:border-y-0">
+              <span className="font-semibold text-red-600 text-base">Low Stocks</span>
               <div className="flex gap-8">
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    12
+                    {lowStockProducts}
                   </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Ordered
-                  </span>
+                  <span className="font-thin text-gray-400 text-xs">Alert Products</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    2
+                    {products.filter((p) => p.stock === 0).length}
                   </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Not in Stock
-                  </span>
+                  <span className="font-thin text-gray-400 text-xs">Out of Stock</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Modals */}
         {showProductModal && (
           <AddProduct
             addProductModalSetting={addProductModalSetting}
@@ -186,19 +195,19 @@ function Inventory() {
           />
         )}
 
-        {/* Table  */}
-        <div className="overflow-x-auto rounded-lg border bg-white border-gray-200 ">
+        {/* Product Table */}
+        <div className="overflow-x-auto rounded-lg border bg-white border-gray-200">
           <div className="flex justify-between pt-5 pb-3 px-3">
-            <div className="flex gap-4 justify-center items-center ">
+            <div className="flex gap-4 justify-center items-center">
               <span className="font-bold">Products</span>
-              <div className="flex justify-center items-center px-2 border-2 rounded-md ">
+              <div className="flex items-center px-2 border-2 rounded-md">
                 <img
                   alt="search-icon"
                   className="w-5 h-5"
                   src={require("../assets/search-icon.png")}
                 />
                 <input
-                  className="border-none outline-none focus:border-none text-xs"
+                  className="border-none outline-none text-xs"
                   type="text"
                   placeholder="Search here"
                   value={searchTerm}
@@ -206,76 +215,51 @@ function Inventory() {
                 />
               </div>
             </div>
-            <div className="flex gap-4">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 text-xs  rounded"
-                onClick={addProductModalSetting}
-              >
-                {/* <Link to="/inventory/add-product">Add Product</Link> */}
-                Add Product
-              </button>
-            </div>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 text-xs rounded"
+              onClick={addProductModalSetting}
+            >
+              Add Product
+            </button>
           </div>
+
           <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
             <thead>
               <tr>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Products
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Manufacturer
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Stock
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Description
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Availibility
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  More
-                </th>
+                <th className="px-4 py-2 text-left font-medium text-gray-900">Products</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-900">Manufacturer</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-900">Stock</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-900">Description</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-900">Availability</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-900">More</th>
               </tr>
             </thead>
-
             <tbody className="divide-y divide-gray-200">
-              {products.map((element, index) => {
-                return (
-                  <tr key={element._id}>
-                    <td className="whitespace-nowrap px-4 py-2  text-gray-900">
-                      {element.name}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.manufacturer}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.stock}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.description}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.stock > 0 ? "In Stock" : "Not in Stock"}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      <span
-                        className="text-green-700 cursor-pointer"
-                        onClick={() => updateProductModalSetting(element)}
-                      >
-                        Edit{" "}
-                      </span>
-                      <span
-                        className="text-red-600 px-2 cursor-pointer"
-                        onClick={() => deleteItem(element._id)}
-                      >
-                        Delete
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+              {products.map((product) => (
+                <tr key={product._id}>
+                  <td className="px-4 py-2 text-gray-900">{product.name}</td>
+                  <td className="px-4 py-2 text-gray-700">{product.manufacturer}</td>
+                  <td className="px-4 py-2 text-gray-700">{product.stock}</td>
+                  <td className="px-4 py-2 text-gray-700">{product.description}</td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {product.stock > 0 ? "In Stock" : "Not in Stock"}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    <span
+                      className="text-green-700 cursor-pointer"
+                      onClick={() => updateProductModalSetting(product)}
+                    >
+                      Edit
+                    </span>
+                    <span
+                      className="text-red-600 px-2 cursor-pointer"
+                      onClick={() => deleteItem(product._id)}
+                    >
+                      Delete
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

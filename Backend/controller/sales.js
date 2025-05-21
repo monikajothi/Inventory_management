@@ -15,7 +15,7 @@ const addSales = (req, res) => {
   addSale
     .save()
     .then((result) => {
-      soldStock(req.body.productName, req.body.stockSold); // optional, only if this is how your soldStock works
+      soldStock(req.body.productName, req.body.stockSold); 
       res.status(200).send(result);
     })
     .catch((err) => {
@@ -28,7 +28,7 @@ const getSalesData = async (req, res) => {
   try {
     const data = await Sales.find({ userID: req.params.userID })
       .sort({ _id: -1 })
-      .populate("StoreID"); // populate only store since productName is a string now
+      .populate("StoreID"); 
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: "Error fetching sales data." });
