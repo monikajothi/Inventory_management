@@ -42,10 +42,58 @@ router.post('/reset-password', async (req, res) => {
 
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  user.password = newPassword; // hash in production
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedPassword;
   await user.save();
 
   res.status(200).json({ message: "Password reset successfully" });
+});
+
+
+const bcrypt = require("bcrypt");
+
+router.post("/register", async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, phoneNumber, imageUrl } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: "User already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      phoneNumber,
+      imageUrl,
+    });
+
+    await newUser.save();
+    res.status(200).json({ message: "Signup successful", user: newUser });
+  } catch (err) {
+    console.error("Register Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+
+    res.status(200).json({ message: "Login successful", user });
+  } catch (error) {
+    console.error("Login Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;

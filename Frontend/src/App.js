@@ -32,10 +32,33 @@ const App = () => {
     }
   }, [myLoginUser]);
 
-  const signin = (newUser, callback) => {
-    setUser(newUser);
-    callback();
-  };
+  const signin = async (email, password) => {
+  try {
+    const response = await fetch("https://inventory-management-s29k.onrender.com/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Invalid credentials");
+    }
+
+    const data = await response.json();
+
+    // Assuming your backend returns: { token, user }
+    localStorage.setItem("token", data.token);
+    setUser(data.user);
+
+    return data.user;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
+
 
   const signout = () => {
     setUser(null);
@@ -59,7 +82,7 @@ const App = () => {
     );
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, signin, signout }}>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
