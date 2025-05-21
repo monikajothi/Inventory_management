@@ -6,7 +6,8 @@ const purchaseRoute = require("./router/purchase");
 const salesRoute = require("./router/sales");
 const cors = require("cors");
 const User = require("./models/users");
-const Product = require('./models/product')
+const Product = require('./models/product');
+const authRoutes = require('./router/auth');
 
 
 const app = express();
@@ -31,6 +32,8 @@ app.use("/api/purchase", purchaseRoute);
 
 // Sales API
 app.use("/api/sales", salesRoute);
+
+app.use('/api/auth', authRoutes);
 
 let userAuthCheck;
 app.post("/api/login", async (req, res) => {

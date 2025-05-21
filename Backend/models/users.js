@@ -3,26 +3,27 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema({
-    firstName: 'String',
-    lastName : 'String',
-    email: 'String',
-    password: 'String',
-    phoneNumber: 'Number',
-    imageUrl: 'String',
-    otp: {
+  firstName: { type: String, required: true },
+  lastName : { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  phoneNumber: { type: Number },
+  imageUrl: { type: String },
+  
+  otp: {
     type: String,
   },
   otpExpiresAt: {
     type: Date,
-  },
+  }
 });
-// Method to generate JWT
+
+// JWT Token generator
 UserSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h", // 1 hour expiry for the JWT token
+  const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET || "your_jwt_secret", {
+    expiresIn: "1h",
   });
   return token;
 };
 
-const User = mongoose.model("users", UserSchema);
-module.exports = User;
+module.exports = mongoose.model("User", UserSchema);

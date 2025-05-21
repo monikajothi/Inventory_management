@@ -1,21 +1,22 @@
-// utils/mailer.js
 const nodemailer = require("nodemailer");
 
-const sendEmail = async (to, subject, text) => {
-  const transporter = nodemailer.createTransport({
-    service: "Gmail", // or use your provider
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "murugansupermarkets25@gmail.com", // your Gmail
+    pass: "xbxwcizalbjgzfkz", // use app password if 2FA
+  },
+});
 
-  await transporter.sendMail({
-    from: `"Murugan Superstores" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    text,
-  });
+const sendOTP = async (email, otp) => {
+  const mailOptions = {
+    from: '"Inventory System" <murugansupermarkets25@gmail.com>',
+    to: email,
+    subject: "OTP Verification",
+    html: `<p>Your OTP is: <b>${otp}</b></p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
 };
 
-module.exports = sendEmail;
+module.exports = sendOTP;

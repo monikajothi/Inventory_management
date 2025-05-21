@@ -33,16 +33,7 @@ function Login() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      await authContext.googleSignIn();
-      alert("Logged in with Google!");
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-      alert("Google login failed.");
-    }
-  };
+  
 
   const handleForgotPassword = async () => {
     if (!form.email) {
@@ -50,9 +41,8 @@ function Login() {
       return;
     }
   
-    try {
-      await authContext.forgotPassword(form.email); // ✅ Wait for Firebase call
-      navigate("/reset-password"); // ✅ Then redirect
+    try { // ✅ Wait for Firebase call
+      navigate("/forgot-password", { state: { email: form.email } }); // ✅ Then redirect
       alert("Password reset email sent!");
     } catch (error) {
       alert("Failed to send reset email.");
