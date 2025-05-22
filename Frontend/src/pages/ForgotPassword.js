@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [step, setStep] = useState(1);
+
+  const navigate = useNavigate();
 
   const location = useLocation();
   React.useEffect(() => {
@@ -15,7 +19,7 @@ function ForgotPassword() {
   }, [location.state]);
 
   const sendOtp = async () => {
-    const res = await fetch('/api/auth/send-otp', {
+    const res = await fetch('https://inventory-management-s29k.onrender.com/api/auth/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
@@ -24,7 +28,7 @@ function ForgotPassword() {
   };
 
   const verifyOtp = async () => {
-    const res = await fetch('/api/auth/verify-otp', {
+    const res = await fetch('https://inventory-management-s29k.onrender.com/api/auth/verify-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, otp }),
@@ -33,12 +37,15 @@ function ForgotPassword() {
   };
 
   const resetPassword = async () => {
-    const res = await fetch('/api/auth/reset-password', {
+    const res = await fetch('https://inventory-management-s29k.onrender.com/api/auth/reset-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, newPassword }),
     });
-    if (res.ok) alert("Password changed successfully!");
+    if (res.ok) {
+      alert("Password changed successfully!");
+      navigate("/login");
+    }
   };
 
   return (

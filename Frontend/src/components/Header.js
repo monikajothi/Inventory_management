@@ -20,8 +20,8 @@ function classNames(...classes) {
 
 export default function Header() {
   const authContext = useContext(AuthContext);
-  const localStorageData = JSON.parse(localStorage.getItem("user"));
-  const userInitial = localStorageData?.firstName?.charAt(0).toUpperCase();
+const { user } = authContext;
+const userInitial = user?.firstName?.charAt(0).toUpperCase();
 
   return (
     <div className="min-h-full">
@@ -131,12 +131,11 @@ export default function Header() {
                   </div>
                   <div className="ml-3">
                     <div className="text-base font-medium leading-none text-white">
-                      {localStorageData.firstName +
-                        " " +
-                        localStorageData.lastName}
+                     {user?.firstName + " " + user?.lastName}
+
                     </div>
                     <div className="text-sm font-medium leading-none text-gray-400">
-                      {localStorageData.email}
+                      {user?.email}
                     </div>
                   </div>
                 </div>

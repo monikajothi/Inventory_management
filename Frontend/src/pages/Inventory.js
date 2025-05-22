@@ -21,7 +21,7 @@ function Inventory() {
   const [lowStockProducts, setLowStockProducts] = useState(0);
 
   const authContext = useContext(AuthContext);
-
+  const userId = authContext.user?._id;
   useEffect(() => {
     fetchAllData();
   }, [updatePage]);
@@ -29,10 +29,10 @@ function Inventory() {
   const fetchAllData = async () => {
     try {
       const [productRes, storeRes, salesRes, purchaseRes] = await Promise.all([
-        fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`),
-        fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`),
-        fetch(`https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user}`),
-        fetch(`https://inventory-management-s29k.onrender.com/api/purchase/get/${authContext.user}`),
+        fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${userId}`),
+        fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${userId}`),
+        fetch(`https://inventory-management-s29k.onrender.com/api/sales/get/${userId}`),
+        fetch(`https://inventory-management-s29k.onrender.com/api/purchase/get/${userId}`),
       ]);
 
       const productData = await productRes.json();

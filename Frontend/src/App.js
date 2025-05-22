@@ -34,7 +34,7 @@ const App = () => {
 
   const signin = async (email, password) => {
   try {
-    const response = await fetch("https://inventory-management-s29k.onrender.com/api/login", {
+    const response = await fetch("https://inventory-management-s29k.onrender.com/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -73,7 +73,7 @@ function Register() {
   const registerUser = () => {
     if (!validateForm()) return; // Stop if validation fails
 
-    fetch("https://inventory-management-s29k.onrender.com/api/register", {
+    fetch("https://inventory-management-s29k.onrender.com/api/auth/register", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

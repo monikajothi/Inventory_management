@@ -54,7 +54,7 @@ function Dashboard() {
 
   const fetchTotalSaleAmount = useCallback(() => {
     fetch(
-      `https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user}/totalsaleamount`
+      `https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user?._id}/totalsaleamount`
     )
       .then((response) => response.json())
       .then((datas) => setSaleAmount(datas?.totalSaleAmount || 0));
@@ -62,20 +62,20 @@ function Dashboard() {
 
   const fetchTotalPurchaseAmount = useCallback(() => {
     fetch(
-      `https://inventory-management-s29k.onrender.com/api/purchase/get/${authContext.user}/totalpurchaseamount`
+      `https://inventory-management-s29k.onrender.com/api/purchase/get/${authContext.user?._id}/totalpurchaseamount`
     )
       .then((response) => response.json())
       .then((datas) => setPurchaseAmount(datas?.totalPurchaseAmount || 0));
   }, [authContext.user]);
 
   const fetchStoresData = useCallback(() => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user?._id}`)
       .then((response) => response.json())
       .then((datas) => setStores(datas || []));
   }, [authContext.user]);
 
   const fetchProductsData = useCallback(() => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user?._id}`)
       .then((response) => response.json())
       .then((datas) => setProducts(datas || []))
       .catch((err) => console.log(err));

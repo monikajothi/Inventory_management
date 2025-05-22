@@ -48,14 +48,14 @@ function Sales() {
   }, [updatePage]);
 
   const fetchSalesData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/sales/get/${authContext.user?._id}`)
       .then((response) => response.json())
       .then((data) => setAllSalesData(data))
       .catch((err) => console.log(err));
   };
 
   const fetchProductsData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user?._id}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
@@ -65,7 +65,7 @@ function Sales() {
   };
 
   const fetchStoresData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/store/get/${authContext.user?._id}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);

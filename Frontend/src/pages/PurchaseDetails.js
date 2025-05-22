@@ -8,7 +8,7 @@ function PurchaseDetails() {
   const [products, setAllProducts] = useState([]);
   const [updatePage, setUpdatePage] = useState(true);
 
-  const authContext = useContext(AuthContext);
+   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     fetchPurchaseData();
@@ -17,7 +17,7 @@ function PurchaseDetails() {
 
   // Fetching Data of All Purchase items
   const fetchPurchaseData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/purchase/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/purchase/get/${user?._id}`)
       .then((response) => response.json())
       .then((data) => {
         setAllPurchaseData(data);
@@ -27,7 +27,7 @@ function PurchaseDetails() {
 
   // Fetching Data of All Products
   const fetchProductsData = () => {
-    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${authContext.user}`)
+    fetch(`https://inventory-management-s29k.onrender.com/api/product/get/${user?._id}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
@@ -54,7 +54,7 @@ function PurchaseDetails() {
             addSaleModalSetting={addSaleModalSetting}
             products={products}
             handlePageUpdate={handlePageUpdate}
-            authContext = {authContext}
+            authContext={{ user }}
           />
         )}
         {/* Table  */}

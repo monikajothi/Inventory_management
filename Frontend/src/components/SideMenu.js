@@ -1,8 +1,9 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import AuthContext from "../AuthContext";
+import React, { useContext } from "react";
 
 function SideMenu() {
-  const localStorageData = JSON.parse(localStorage.getItem("user"));
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="h-full flex-col justify-between  bg-white hidden lg:flex ">
@@ -74,10 +75,10 @@ function SideMenu() {
           <div>
             <p className="text-xs">
               <strong className="block font-medium">
-                {localStorageData.firstName + " " + localStorageData.lastName}
+                {user.firstName + " " + user.lastName}
               </strong>
 
-              <span> {localStorageData.email} </span>
+              <span> {user.email} </span>
             </p>
           </div>
         </div>

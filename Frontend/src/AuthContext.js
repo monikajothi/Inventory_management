@@ -10,11 +10,14 @@ import axios from "axios";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const signin = async (email, password) => {
     try {
-      const response = await axios.post("https://inventory-management-s29k.onrender.com/api/login", {
+      const response = await axios.post("https://inventory-management-s29k.onrender.com/api/auth/login", {
         email,
         password,
       });
@@ -22,6 +25,7 @@ export const AuthProvider = ({ children }) => {
       const { token, user } = response.data;
 
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user)); // save user to localStorage
       setUser(user);
 
       return user;
@@ -32,6 +36,7 @@ export const AuthProvider = ({ children }) => {
 
   const signout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user"); // remove user from localStorage
     setUser(null);
   };
 
@@ -43,3 +48,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
+
