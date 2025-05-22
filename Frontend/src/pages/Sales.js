@@ -80,7 +80,7 @@ const fetchTopProducts = async () => {
   setError('');
   try {
     const response = await fetch(
-      `http://localhost:5000/predict/top-products?store_id=${selectedStore}&date=${new Date().toISOString().split('T')[0]}&top_n=5`
+      `https://inventory-management-2-gvbw.onrender.com/predict/top-products?store_id=${selectedStore}&date=${new Date().toISOString().split('T')[0]}&top_n=5`
     );
     if (!response.ok) throw new Error('Failed to fetch predictions');
     const data = await response.json();
@@ -98,7 +98,7 @@ const fetchProductTrend = async () => {
   setError('');
   try {
     const response = await fetch(
-      `http://localhost:5000/predict/product-trend?product_name=${selectedProduct}&store_id=${selectedStore}&start_date=${new Date().toISOString().split('T')[0]}`
+      `https://inventory-management-2-gvbw.onrender.com/predict/product-trend?product_name=${selectedProduct}&store_id=${selectedStore}&start_date=${new Date().toISOString().split('T')[0]}`
     );
     if (!response.ok) throw new Error('Failed to fetch trend');
     const data = await response.json();
